@@ -24,6 +24,16 @@ monthly_challenges_dict = {
 # Create your views here.
 
 
+def index(request):
+    list_items = ""
+    months = list(monthly_challenges_dict.keys())
+    for month in months:
+        month_url = reverse("month-challenge", args=[month])
+        list_items += f"<li><a href='{month_url}'>{month.capitalize()}</a></li>"
+    response_data = f"<ul>{list_items}</ul>"
+    return HttpResponse(response_data)
+
+
 def monthly_challenge_by_number(request, month):
     if not month or month < 0 or month > 12:
         return HttpResponseNotFound('Please enter a valid month number (1 - 12).')
@@ -36,4 +46,8 @@ def monthly_challenge_by_number(request, month):
 def monthly_challenge(request, month):
     if month not in list(monthly_challenges_dict.keys()):
         return HttpResponseNotFound('Please enter a valid month name (january, ..., december)')
-    return HttpResponse(monthly_challenges_dict[month])
+    
+    return render(request, 'challenges/challenge.html',{
+        'month': month,
+        'challenge': monthly_challenges_dict[month],
+    })
